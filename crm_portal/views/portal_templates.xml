@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <template
+            id="crm_dashboard"
+            name="CRM Portal Dashboard">
+
+        <t t-call="portal.portal_layout">
+
+            <div class="crm-dashboard">
+
+                <div class="container">
+
+                    <!-- ================================================= -->
+                    <!-- HEADER -->
+                    <!-- ================================================= -->
+
+                    <div class="crm-dashboard-header">
+
+                        <div>
+
+                            <div class="crm-dashboard-eyebrow">
+                                CRM PORTAL
+                            </div>
+
+                            <h1 class="crm-dashboard-title">
+                                Welcome,
+                                <t t-esc="request.env.user.name"/>
+                            </h1>
+
+                            <p class="crm-dashboard-subtitle">
+                                Manage your leads, opportunities and sales pipeline from one place.
+                            </p>
+
+                        </div>
+
+                        <div class="crm-dashboard-user">
+
+                            <div class="crm-dashboard-avatar">
+                                <t t-esc="request.env.user.name[:1].upper()"/>
+                            </div>
+
+                            <div>
+                                <div class="crm-dashboard-user-name">
+                                    <t t-esc="request.env.user.name"/>
+                                </div>
+
+                                <div class="crm-dashboard-user-email">
+                                    <t t-esc="request.env.user.partner_id.email or ''"/>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- KPI CARDS -->
+                    <!-- ================================================= -->
+
+                    <div class="row g-4 mb-4">
+
+                        <!-- LEADS -->
+
+                        <div class="col-xl-3 col-md-6">
+
+                            <div class="crm-kpi-card crm-kpi-blue">
+
+                                <div class="crm-kpi-top">
+
+                                    <div class="crm-kpi-icon">
+                                        <i class="fa fa-users"/>
+                                    </div>
+
+                                    <span class="crm-kpi-label">
+                                        LEADS
+                                    </span>
+
+                                </div>
+
+                                <div class="crm-kpi-number">
+                                    <t t-esc="lead_count"/>
+                                </div>
+
+                                <div class="crm-kpi-description">
+                                    Active leads assigned to you
+                                </div>
+
+                                <a
+                                        href="/my/crm/leads"
+                                        class="crm-kpi-link">
+                                    View Leads
+                                    <i class="fa fa-arrow-right"/>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- OPPORTUNITIES -->
+
+                        <div class="col-xl-3 col-md-6">
+
+                            <div class="crm-kpi-card crm-kpi-purple">
+
+                                <div class="crm-kpi-top">
+
+                                    <div class="crm-kpi-icon">
+                                        <i class="fa fa-briefcase"/>
+                                    </div>
+
+                                    <span class="crm-kpi-label">
+                                        OPPORTUNITIES
+                                    </span>
+
+                                </div>
+
+                                <div class="crm-kpi-number">
+                                    <t t-esc="opportunity_count"/>
+                                </div>
+
+                                <div class="crm-kpi-description">
+                                    Active sales opportunities
+                                </div>
+
+                                <a
+                                        href="/my/crm/opportunities"
+                                        class="crm-kpi-link">
+                                    View Opportunities
+                                    <i class="fa fa-arrow-right"/>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- WON -->
+
+                        <div class="col-xl-3 col-md-6">
+
+                            <div class="crm-kpi-card crm-kpi-green">
+
+                                <div class="crm-kpi-top">
+
+                                    <div class="crm-kpi-icon">
+                                        <i class="fa fa-trophy"/>
+                                    </div>
+
+                                    <span class="crm-kpi-label">
+                                        WON
+                                    </span>
+
+                                </div>
+
+                                <div class="crm-kpi-number">
+                                    <t t-esc="won_count"/>
+                                </div>
+
+                                <div class="crm-kpi-description">
+                                    Successfully won opportunities
+                                </div>
+
+                                <a
+                                        href="/my/crm/opportunities"
+                                        class="crm-kpi-link">
+                                    View Won
+                                    <i class="fa fa-arrow-right"/>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- REVENUE -->
+
+                        <div class="col-xl-3 col-md-6">
+
+                            <div class="crm-kpi-card crm-kpi-orange">
+
+                                <div class="crm-kpi-top">
+
+                                    <div class="crm-kpi-icon">
+                                        <i class="fa fa-money"/>
+                                    </div>
+
+                                    <span class="crm-kpi-label">
+                                        PIPELINE VALUE
+                                    </span>
+
+                                </div>
+
+                                <div class="crm-kpi-number crm-kpi-money">
+                                   <t t-esc="'%.2f' % (total_revenue or 0.0)"/>
+                                </div>
+
+                                <div class="crm-kpi-description">
+                                    Expected opportunity revenue
+                                </div>
+
+                                <a
+                                        href="/my/crm/opportunities"
+                                        class="crm-kpi-link">
+                                    View Pipeline
+                                    <i class="fa fa-arrow-right"/>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- PIPELINE -->
+                    <!-- ================================================= -->
+
+                    <div class="crm-section-card mb-4">
+
+                        <div class="crm-section-header">
+
+                            <div>
+                                <h2>
+                                    Sales Pipeline
+                                </h2>
+
+                                <p>
+                                    Track your opportunities through each stage.
+                                </p>
+                            </div>
+
+                            <a
+                                    href="/my/crm/opportunities"
+                                    class="crm-section-link">
+                                View Pipeline
+                                <i class="fa fa-arrow-right"/>
+                            </a>
+
+                        </div>
+
+
+                        <div class="crm-pipeline-dashboard">
+
+                            <t t-foreach="pipeline" t-as="item">
+
+                                <div class="crm-pipeline-row">
+
+                                    <div class="crm-pipeline-row-name">
+
+                                        <span>
+                                            <t t-esc="item['stage'].name"/>
+                                        </span>
+
+                                        <strong>
+                                            <t t-esc="item['count']"/>
+                                        </strong>
+
+                                    </div>
+
+                                    <div class="crm-pipeline-bar">
+
+                                        <div
+                                                class="crm-pipeline-bar-fill"
+                                                t-attf-style="width: #{(item['count'] / max_pipeline_count) * 100}%;"
+                                        ></div>
+                                    </div>
+
+                                </div>
+
+                            </t>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- RECENT LEADS + OPPORTUNITIES -->
+                    <!-- ================================================= -->
+
+                    <div class="row g-4 mb-4">
+
+                        <!-- RECENT LEADS -->
+
+                        <div class="col-lg-6">
+
+                            <div class="crm-section-card h-100">
+
+                                <div class="crm-section-header">
+
+                                    <div>
+                                        <h2>
+                                            Recent Leads
+                                        </h2>
+
+                                        <p>
+                                            Your latest CRM leads.
+                                        </p>
+                                    </div>
+
+                                    <a
+                                            href="/my/crm/leads"
+                                            class="crm-section-link">
+                                        View All
+                                    </a>
+
+                                </div>
+
+
+                                <div class="crm-recent-list">
+
+                                    <t t-if="recent_leads">
+
+                                        <t t-foreach="recent_leads" t-as="lead">
+
+                                            <a
+                                                    t-att-href="'/my/crm/leads/%s' % lead.id"
+                                                    class="crm-recent-item">
+
+                                                <div class="crm-recent-icon crm-icon-blue">
+                                                    <i class="fa fa-user"/>
+                                                </div>
+
+                                                <div class="crm-recent-content">
+
+                                                    <div class="crm-recent-title">
+                                                        <t t-esc="lead.name"/>
+                                                    </div>
+
+                                                    <div class="crm-recent-meta">
+
+                                                        <t t-esc="lead.partner_id.name or 'No Customer'"/>
+
+                                                        <span class="crm-dot">
+                                                            •
+                                                        </span>
+
+                                                        <t t-esc="lead.stage_id.name"/>
+
+                                                    </div>
+
+                                                </div>
+
+                                                <i class="fa fa-angle-right crm-recent-arrow"/>
+
+                                            </a>
+
+                                        </t>
+
+                                    </t>
+
+                                    <t t-else="">
+
+                                        <div class="crm-empty-state">
+                                            <i class="fa fa-users"/>
+                                            <span>
+                                                No leads found.
+                                            </span>
+                                        </div>
+
+                                    </t>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- RECENT OPPORTUNITIES -->
+
+                        <div class="col-lg-6">
+
+                            <div class="crm-section-card h-100">
+
+                                <div class="crm-section-header">
+
+                                    <div>
+                                        <h2>
+                                            Recent Opportunities
+                                        </h2>
+
+                                        <p>
+                                            Your latest sales opportunities.
+                                        </p>
+                                    </div>
+
+                                    <a
+                                            href="/my/crm/opportunities"
+                                            class="crm-section-link">
+                                        View All
+                                    </a>
+
+                                </div>
+
+
+                                <div class="crm-recent-list">
+
+                                    <t t-if="recent_opportunities">
+
+                                        <t t-foreach="recent_opportunities" t-as="opportunity">
+
+                                            <a
+                                                    t-att-href="'/my/crm/opportunities/%s' % opportunity.id"
+                                                    class="crm-recent-item">
+
+                                                <div class="crm-recent-icon crm-icon-purple">
+                                                    <i class="fa fa-briefcase"/>
+                                                </div>
+
+                                                <div class="crm-recent-content">
+
+                                                    <div class="crm-recent-title">
+                                                        <t t-esc="opportunity.name"/>
+                                                    </div>
+
+                                                    <div class="crm-recent-meta">
+
+                                                        <t t-esc="opportunity.partner_id.name or 'No Customer'"/>
+
+                                                        <span class="crm-dot">
+                                                            •
+                                                        </span>
+
+                                                        <t t-esc="opportunity.stage_id.name"/>
+
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="crm-recent-revenue">
+                                                    <t t-esc="'%.2f' % opportunity.expected_revenue"/>
+                                                </div>
+
+                                            </a>
+
+                                        </t>
+
+                                    </t>
+
+                                    <t t-else="">
+
+                                        <div class="crm-empty-state">
+                                            <i class="fa fa-briefcase"/>
+                                            <span>
+                                                No opportunities found.
+                                            </span>
+                                        </div>
+
+                                    </t>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- ACTIVITIES -->
+                    <!-- ================================================= -->
+
+                    <div class="crm-section-card mb-4">
+
+                        <div class="crm-section-header">
+
+                            <div>
+                                <h2>
+                                    Upcoming Activities
+                                </h2>
+
+                                <p>
+                                    Stay on top of your CRM follow-ups.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="crm-activity-list">
+
+                            <t t-if="activities">
+
+                                <t t-foreach="activities" t-as="activity">
+
+                                    <div class="crm-activity-item">
+
+                                        <div class="crm-activity-icon">
+                                            <i class="fa fa-calendar"/>
+                                        </div>
+
+                                        <div class="crm-activity-content">
+
+                                            <div class="crm-activity-title">
+                                                <t t-esc="activity.summary or activity.activity_type_id.name"/>
+                                            </div>
+
+                                            <div class="crm-activity-meta">
+
+                                                <t t-esc="activity.res_name or 'CRM Activity'"/>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="crm-activity-date">
+
+                                            <t t-if="activity.date_deadline">
+                                                <t t-esc="activity.date_deadline"/>
+                                            </t>
+
+                                        </div>
+
+                                    </div>
+
+                                </t>
+
+                            </t>
+
+                            <t t-else="">
+
+                                <div class="crm-empty-state">
+                                    <i class="fa fa-check-circle"/>
+                                    <span>
+                                        No upcoming activities.
+                                    </span>
+                                </div>
+
+                            </t>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- QUICK ACTIONS -->
+                    <!-- ================================================= -->
+
+                    <div class="crm-section-card crm-quick-actions">
+
+                        <div class="crm-section-header">
+
+                            <div>
+                                <h2>
+                                    Quick Actions
+                                </h2>
+
+                                <p>
+                                    Quickly access the CRM functions you use most.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+
+                                <a
+                                        href="/my/crm/leads/create"
+                                        class="crm-action-card crm-action-blue">
+
+                                    <div class="crm-action-icon">
+                                        <i class="fa fa-plus"/>
+                                    </div>
+
+                                    <div>
+
+                                        <div class="crm-action-title">
+                                            Create Lead
+                                        </div>
+
+                                        <div class="crm-action-text">
+                                            Add a new customer enquiry.
+                                        </div>
+
+                                    </div>
+
+                                    <i class="fa fa-arrow-right crm-action-arrow"/>
+
+                                </a>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <a
+                                        href="/my/crm/leads"
+                                        class="crm-action-card crm-action-purple">
+
+                                    <div class="crm-action-icon">
+                                        <i class="fa fa-users"/>
+                                    </div>
+
+                                    <div>
+
+                                        <div class="crm-action-title">
+                                            Manage Leads
+                                        </div>
+
+                                        <div class="crm-action-text">
+                                            Search and manage your leads.
+                                        </div>
+
+                                    </div>
+
+                                    <i class="fa fa-arrow-right crm-action-arrow"/>
+
+                                </a>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <a
+                                        href="/my/crm/opportunities"
+                                        class="crm-action-card crm-action-green">
+
+                                    <div class="crm-action-icon">
+                                        <i class="fa fa-briefcase"/>
+                                    </div>
+
+                                    <div>
+
+                                        <div class="crm-action-title">
+                                            Manage Opportunities
+                                        </div>
+
+                                        <div class="crm-action-text">
+                                            Track your sales opportunities.
+                                        </div>
+
+                                    </div>
+
+                                    <i class="fa fa-arrow-right crm-action-arrow"/>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </t>
+
+    </template>
+
+</odoo>

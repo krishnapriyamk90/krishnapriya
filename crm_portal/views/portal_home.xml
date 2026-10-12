@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template
+        id="portal_my_home_crm_portal"
+        name="CRM Portal Card"
+        inherit_id="portal.portal_my_home"
+        priority="30">
+
+        <xpath expr="//div[@id='portal_common_category']" position="inside">
+
+            <t t-call="portal.portal_docs_entry">
+
+                <t t-set="icon"
+                   t-value="'/crm_portal/static/src/img/img.png'"/>
+
+                <t t-set="title">
+                    CRM Portal
+                </t>
+
+                <t t-set="text">
+                    Manage your leads and opportunities.
+                </t>
+
+                <t t-set="url"
+                   t-value="'/my/crm'"/>
+
+                <t t-set="config_card"
+                   t-value="True"/>
+
+            </t>
+
+        </xpath>
+
+    </template>
+
+</odoo>

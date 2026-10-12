@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- =====================================================
+         ACTIVITIES LIST
+    ====================================================== -->
+
+    <template
+        id="crm_activities"
+        name="CRM Portal Activities">
+
+        <t t-call="portal.portal_layout">
+
+            <div class="container py-5">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <div>
+                        <h1 class="mb-1">
+                            Activities
+                        </h1>
+
+                        <p class="text-muted mb-0">
+                            View and manage your CRM activities.
+                        </p>
+                    </div>
+
+                    <a
+                        href="/my/crm"
+                        class="btn btn-outline-secondary">
+                        Back to Dashboard
+                    </a>
+
+                </div>
+
+
+                <t t-if="activities">
+
+                    <div class="row g-4">
+
+                        <t t-foreach="activities" t-as="activity">
+
+                            <div class="col-12">
+
+                                <div class="card shadow-sm">
+
+                                    <div class="card-body">
+
+                                        <div class="row align-items-center">
+
+                                            <!-- Activity Type -->
+
+                                            <div class="col-md-2">
+
+                                                <strong>
+                                                    <t t-esc="activity.activity_type_id.name"/>
+                                                </strong>
+
+                                            </div>
+
+
+                                            <!-- Summary -->
+
+                                            <div class="col-md-4">
+
+                                                <div class="fw-semibold">
+                                                    <t t-esc="activity.summary or 'No Summary'"/>
+                                                </div>
+
+                                                <small class="text-muted">
+                                                    <t t-esc="activity.note or ''"/>
+                                                </small>
+
+                                            </div>
+
+
+                                            <!-- Due Date -->
+
+                                            <div class="col-md-2">
+
+                                                <small class="text-muted">
+                                                    Due Date
+                                                </small>
+
+                                                <div>
+                                                    <t t-esc="activity.date_deadline"/>
+                                                </div>
+
+                                            </div>
+
+
+                                            <!-- Assigned User -->
+
+                                            <div class="col-md-2">
+
+                                                <small class="text-muted">
+                                                    Assigned To
+                                                </small>
+
+                                                <div>
+                                                    <t t-esc="activity.user_id.name"/>
+                                                </div>
+
+                                            </div>
+
+
+                                            <!-- Open -->
+
+                                            <div class="col-md-2 text-md-end">
+
+                                                <a
+                                                    t-att-href="'/my/crm/activities/%s' % activity.id"
+                                                    class="btn btn-primary">
+                                                    Open
+                                                </a>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </t>
+
+                    </div>
+
+                </t>
+
+
+                <!-- No Activities -->
+
+                <t t-else="">
+
+                    <div class="card shadow-sm">
+
+                        <div class="card-body text-center py-5">
+
+                            <h4>
+                                No Activities
+                            </h4>
+
+                            <p class="text-muted mb-0">
+                                There are no CRM activities available.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </t>
+
+            </div>
+
+        </t>
+
+    </template>
+
+
+    <!-- =====================================================
+         ACTIVITY DETAIL
+    ====================================================== -->
+
+    <template
+        id="crm_activity_detail"
+        name="CRM Portal Activity Detail">
+
+        <t t-call="portal.portal_layout">
+
+            <div class="container py-5">
+
+                <div class="mb-4">
+
+                    <a
+                        href="/my/crm/activities"
+                        class="btn btn-outline-secondary">
+                        ← Back to Activities
+                    </a>
+
+                </div>
+
+
+                <div class="card shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <h1 class="mb-4">
+                            Activity Details
+                        </h1>
+
+
+                        <!-- Activity Type -->
+
+                        <div class="mb-3">
+
+                            <label class="fw-semibold">
+                                Activity Type
+                            </label>
+
+                            <div>
+                                <t t-esc="activity.activity_type_id.name"/>
+                            </div>
+
+                        </div>
+
+
+                        <!-- Summary -->
+
+                        <div class="mb-3">
+
+                            <label class="fw-semibold">
+                                Summary
+                            </label>
+
+                            <div>
+                                <t t-esc="activity.summary or 'No Summary'"/>
+                            </div>
+
+                        </div>
+
+
+                        <!-- Due Date -->
+
+                        <div class="mb-3">
+
+                            <label class="fw-semibold">
+                                Due Date
+                            </label>
+
+                            <div>
+                                <t t-esc="activity.date_deadline"/>
+                            </div>
+
+                        </div>
+
+
+                        <!-- Assigned User -->
+
+                        <div class="mb-3">
+
+                            <label class="fw-semibold">
+                                Assigned To
+                            </label>
+
+                            <div>
+                                <t t-esc="activity.user_id.name"/>
+                            </div>
+
+                        </div>
+
+
+                        <!-- Related CRM -->
+
+                        <t t-if="lead">
+
+                            <div class="mb-3">
+
+                                <label class="fw-semibold">
+                                    Related CRM
+                                </label>
+
+                                <div>
+
+                                    <t t-esc="lead.name"/>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Customer -->
+
+                            <div class="mb-3">
+
+                                <label class="fw-semibold">
+                                    Customer
+                                </label>
+
+                                <div>
+
+                                    <t t-esc="lead.partner_id.name"/>
+
+                                </div>
+
+                            </div>
+
+                        </t>
+
+
+                        <!-- Description -->
+
+                        <div class="mb-4">
+
+                            <label class="fw-semibold">
+                                Description
+                            </label>
+
+                            <div>
+
+                                <t t-raw="activity.note or ''"/>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Mark Done -->
+
+                        <form
+                            t-att-action="'/my/crm/activities/%s/done' % activity.id"
+                            method="post">
+
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                t-att-value="request.csrf_token()"/>
+
+                            <button
+                                type="submit"
+                                class="btn btn-success">
+
+                                Mark Done
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </t>
+
+    </template>
+
+</odoo>

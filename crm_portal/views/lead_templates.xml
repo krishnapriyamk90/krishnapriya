@@ -1,0 +1,1123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =====================================================
+         LEADS LIST
+    ====================================================== -->
+
+    <template id="crm_leads" name="CRM Portal Leads">
+
+        <t t-call="portal.portal_layout">
+
+            <div class="crm-page">
+
+                <div class="container py-4">
+
+                    <div class="crm-page-header">
+
+                        <div>
+                            <h2 class="crm-page-title">
+                                My Leads
+                            </h2>
+
+                            <p class="crm-page-subtitle">
+                                Manage and track your CRM leads.
+                            </p>
+                        </div>
+
+                        <a href="/my/crm/leads/create"
+                           class="btn btn-primary">
+
+                            + Create Lead
+
+                        </a>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         SEARCH AND FILTER
+                    ================================================== -->
+
+                    <div class="crm-filter-card">
+
+                        <form method="get"
+                              action="/my/crm/leads">
+
+                            <div class="row g-3">
+
+                                <div class="col-md-6">
+
+                                    <label class="form-label">
+                                        Search
+                                    </label>
+
+                                    <input type="text"
+                                           name="search"
+                                           t-att-value="search"
+                                           class="form-control"
+                                           placeholder="Search lead, email or phone..."/>
+
+                                </div>
+
+
+                                <div class="col-md-4">
+
+                                    <label class="form-label">
+                                        Stage
+                                    </label>
+
+                                    <select name="stage_id"
+                                            class="form-select">
+
+                                        <option value="">
+                                            All Stages
+                                        </option>
+
+                                        <t t-foreach="stages"
+                                           t-as="stage">
+
+                                            <option
+                                                    t-att-value="stage.id"
+                                                    t-att-selected="stage.id == selected_stage">
+
+                                                <t t-esc="stage.name"/>
+
+                                            </option>
+
+                                        </t>
+
+                                    </select>
+
+                                </div>
+
+
+                                <div class="col-md-2 d-flex align-items-end">
+
+                                    <button type="submit"
+                                            class="btn btn-dark w-100">
+
+                                        Search
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         STATISTICS
+                    ================================================== -->
+
+                    <div class="crm-list-summary">
+
+                        <span>
+                            <strong>
+                                <t t-esc="total"/>
+                            </strong>
+                            leads found
+                        </span>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         LEADS TABLE
+                    ================================================== -->
+
+                    <div class="crm-table-card">
+
+                        <div class="table-responsive">
+
+                            <table class="table crm-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Lead</th>
+                                        <th>Customer</th>
+                                        <th>Stage</th>
+                                        <th>Revenue</th>
+                                        <th>Probability</th>
+                                        <th>Closing</th>
+                                        <th></th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    <t t-if="leads">
+
+                                        <t t-foreach="leads"
+                                           t-as="lead">
+
+                                            <tr>
+
+                                                <td>
+
+                                                    <a
+                                                            t-att-href="'/my/crm/leads/%s' % lead.id"
+                                                            class="crm-record-link">
+
+                                                        <t t-esc="lead.name"/>
+
+                                                    </a>
+
+                                                </td>
+
+
+                                                <td>
+
+                                                    <t t-esc="lead.partner_id.name or '-'"/>
+
+                                                </td>
+
+
+                                                <td>
+
+                                                    <span class="crm-stage-badge">
+
+                                                        <t t-esc="lead.stage_id.name"/>
+
+                                                    </span>
+
+                                                </td>
+
+
+                                                <td>
+
+                                                    <t t-esc="'{:,.2f}'.format(lead.expected_revenue or 0)"/>
+
+                                                </td>
+
+
+                                                <td>
+
+                                                    <t t-esc="'{}%'.format(int(lead.probability or 0))"/>
+
+                                                </td>
+
+
+                                                <td>
+
+                                                    <t t-esc="lead.date_deadline or '-'"/>
+
+                                                </td>
+
+
+                                                <td class="text-end">
+
+                                                    <a
+                                                            t-att-href="'/my/crm/leads/%s' % lead.id"
+                                                            class="btn btn-sm btn-outline-primary">
+
+                                                        View
+
+                                                    </a>
+
+                                                </td>
+
+                                            </tr>
+
+                                        </t>
+
+                                    </t>
+
+
+                                    <t t-else="">
+
+                                        <tr>
+
+                                            <td colspan="7">
+
+                                                <div class="crm-empty-state">
+
+                                                    <h5>
+                                                        No leads found
+                                                    </h5>
+
+                                                    <p>
+                                                        There are no leads matching your search.
+                                                    </p>
+
+                                                </div>
+
+                                            </td>
+
+                                        </tr>
+
+                                    </t>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         PAGINATION
+                    ================================================== -->
+
+                    <t t-if="page_count &gt; 1">
+
+                        <div class="crm-pagination">
+
+                            <t t-if="page &gt; 1">
+
+                                <a
+                                        t-att-href="'/my/crm/leads?page=%s&amp;search=%s&amp;stage_id=%s' % (page - 1, search or '', selected_stage or '')"
+                                        class="btn btn-outline-secondary">
+
+                                    ← Previous
+
+                                </a>
+
+                            </t>
+
+
+                            <span class="crm-page-number">
+
+                                Page
+
+                                <strong>
+                                    <t t-esc="page"/>
+                                </strong>
+
+                                of
+
+                                <strong>
+                                    <t t-esc="page_count"/>
+                                </strong>
+
+                            </span>
+
+
+                            <t t-if="page &lt; page_count">
+
+                                <a
+                                        t-att-href="'/my/crm/leads?page=%s&amp;search=%s&amp;stage_id=%s' % (page + 1, search or '', selected_stage or '')"
+                                        class="btn btn-outline-secondary">
+
+                                    Next →
+
+                                </a>
+
+                            </t>
+
+                        </div>
+
+                    </t>
+
+                </div>
+
+            </div>
+
+        </t>
+
+    </template>
+
+
+    <!-- =====================================================
+         LEAD DETAIL
+    ====================================================== -->
+
+    <template id="crm_lead_detail"
+              name="CRM Portal Lead Detail">
+
+        <t t-call="portal.portal_layout">
+
+            <div class="crm-page">
+
+                <div class="container py-4">
+
+                    <!-- =================================================
+                         HEADER
+                    ================================================== -->
+
+                    <div class="crm-detail-header">
+
+                        <div>
+
+                            <a href="/my/crm/leads"
+                               class="crm-back-link">
+
+                                ← Back to Leads
+
+                            </a>
+
+                            <h2 class="crm-page-title mt-2">
+
+                                <t t-esc="lead.name"/>
+
+                            </h2>
+
+                            <p class="crm-page-subtitle">
+
+                                Lead details and pipeline information.
+
+                            </p>
+
+                        </div>
+
+                        <div class="d-flex gap-2">
+
+                            <t t-if="lead.type == 'lead' and not lead.stage_id.is_won">
+
+                                <a
+                                        t-att-href="'/my/crm/leads/%s/edit' % lead.id"
+                                        class="btn btn-outline-primary">
+
+                                    Edit Lead
+
+                                </a>
+
+                                <form
+                                        t-att-action="'/my/crm/leads/%s/convert' % lead.id"
+                                        method="post"
+                                        class="d-inline">
+
+                                    <input type="hidden"
+                                           name="csrf_token"
+                                           t-att-value="request.csrf_token()"/>
+
+                                    <button type="submit"
+                                            class="btn btn-primary">
+
+                                        Convert to Opportunity
+
+                                    </button>
+
+                                </form>
+
+                            </t>
+
+                        </div>
+
+                    </div>
+
+                    <!-- =================================================
+                         CRM PIPELINE
+                    ================================================== -->
+
+                    <div class="crm-detail-card">
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                            <div>
+
+                                <h4 class="crm-section-title mb-1">
+                                    Pipeline
+                                </h4>
+
+                                <div class="text-muted small">
+                                    Click any stage to move this lead.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Current stage -->
+
+                            <span class="crm-current-stage">
+
+                                <t t-esc="lead.stage_id.name"/>
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             CLICKABLE PIPELINE
+                        ================================================== -->
+
+                        <div class="crm-pipeline-wrapper">
+
+                            <div class="crm-pipeline">
+
+                                <t t-foreach="stages"
+                                   t-as="stage">
+
+                                    <form
+                                            t-att-action="'/my/crm/leads/%s/stage' % lead.id"
+                                            method="post"
+                                            class="crm-pipeline-form">
+
+                                        <!-- CSRF protection -->
+
+                                        <input type="hidden"
+                                               name="csrf_token"
+                                               t-att-value="request.csrf_token()"/>
+
+
+                                        <!-- Selected stage -->
+
+                                        <input type="hidden"
+                                               name="stage_id"
+                                               t-att-value="stage.id"/>
+
+
+                                        <!-- Stage button -->
+
+                                        <button
+                                                type="submit"
+                                                t-att-class="'crm-pipeline-stage-button %s %s' % ('active' if stage.id == lead.stage_id.id else '', 'won' if stage.is_won else '')">
+
+                                            <span class="crm-pipeline-stage-name">
+
+                                                <t t-esc="stage.name"/>
+
+                                            </span>
+
+
+                                            <!-- Won indicator -->
+
+
+
+                                        </button>
+
+                                    </form>
+
+                                </t>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         LEAD INFORMATION + SALES INFORMATION
+                    ================================================== -->
+
+                    <div class="row g-4 mt-1">
+
+                        <!-- =================================================
+                             BASIC INFORMATION
+                        ================================================== -->
+
+                        <div class="col-lg-7">
+
+                            <div class="crm-detail-card">
+
+                                <h4 class="crm-section-title">
+                                    Lead Information
+                                </h4>
+
+
+                                <div class="crm-info-grid">
+
+                                    <div>
+
+                                        <span class="crm-info-label">
+                                            Customer
+                                        </span>
+
+                                        <strong>
+
+                                            <t t-esc="lead.partner_id.name or '-'"/>
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span class="crm-info-label">
+                                            Email
+                                        </span>
+
+                                        <strong>
+
+                                            <t t-esc="lead.email_from or '-'"/>
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span class="crm-info-label">
+                                            Phone
+                                        </span>
+
+                                        <strong>
+
+                                            <t t-esc="lead.phone or '-'"/>
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span class="crm-info-label">
+                                            Expected Closing
+                                        </span>
+
+                                        <strong>
+
+                                            <t t-esc="lead.date_deadline or '-'"/>
+
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- Description -->
+
+                                <div class="mt-4">
+
+                                    <span class="crm-info-label">
+                                        Description
+                                    </span>
+
+                                    <div class="crm-description">
+
+                                        <t t-if="lead.description">
+
+                                            <t t-esc="lead.description"/>
+
+                                        </t>
+
+                                        <t t-else="">
+
+                                            No description available.
+
+                                        </t>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             SALES INFORMATION
+                        ================================================== -->
+
+                        <div class="col-lg-5">
+
+                            <div class="crm-detail-card">
+
+                                <h4 class="crm-section-title">
+                                    Sales Information
+                                </h4>
+
+
+                                <!-- Expected Revenue -->
+
+                                <div class="crm-metric">
+
+                                    <span>
+                                        Expected Revenue
+                                    </span>
+
+                                    <strong>
+
+                                        <t t-esc="'{:,.2f}'.format(lead.expected_revenue or 0)"/>
+
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- Probability -->
+
+                                <div class="crm-metric">
+
+                                    <span>
+                                        Probability
+                                    </span>
+
+                                    <strong>
+
+                                        <t t-esc="'{}%'.format(int(lead.probability or 0))"/>
+
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- Weighted Revenue -->
+
+                                <div class="crm-metric">
+
+                                    <span>
+                                        Weighted Revenue
+                                    </span>
+
+                                    <strong>
+
+                                        <t t-esc="'{:,.2f}'.format((lead.expected_revenue or 0) * (lead.probability or 0) / 100)"/>
+
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         ACTIVITIES
+                    ================================================== -->
+
+                    <div class="crm-detail-card mt-4">
+
+                        <h4 class="crm-section-title">
+                            Activities
+                        </h4>
+
+
+                        <t t-if="activities">
+
+                            <div class="crm-activity-list">
+
+                                <t t-foreach="activities"
+                                   t-as="activity">
+
+                                    <div class="crm-activity-item">
+
+                                        <div>
+
+                                            <strong>
+
+                                                <t t-esc="activity.summary or activity.activity_type_id.name"/>
+
+                                            </strong>
+
+                                            <div class="crm-activity-meta">
+
+                                                <t t-esc="activity.date_deadline"/>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </t>
+
+                            </div>
+
+                        </t>
+
+
+                        <t t-else="">
+
+                            <div class="crm-empty-state">
+
+                                No activities for this lead.
+
+                            </div>
+
+                        </t>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </t>
+
+    </template>
+
+
+    <!-- =====================================================
+         CREATE LEAD
+    ====================================================== -->
+
+    <template id="crm_lead_create"
+              name="CRM Portal Create Lead">
+
+        <t t-call="portal.portal_layout">
+
+            <div class="crm-page">
+
+                <div class="container py-4">
+
+                    <div class="crm-detail-card">
+
+                        <a href="/my/crm/leads"
+                           class="crm-back-link">
+
+                            ← Back to Leads
+
+                        </a>
+
+                        <h2 class="crm-page-title mt-3">
+                            Create Lead
+                        </h2>
+
+
+                        <form action="/my/crm/leads/create"
+                              method="post"
+                              class="mt-4">
+
+                            <input type="hidden"
+                                   name="csrf_token"
+                                   t-att-value="request.csrf_token()"/>
+
+
+                            <div class="row g-3">
+
+                                <!-- Lead Name -->
+
+                                <div class="col-md-6">
+
+                                    <label class="form-label">
+                                        Lead Name *
+                                    </label>
+
+                                    <input type="text"
+                                           name="name"
+                                           class="form-control"
+                                           required="required"/>
+
+                                </div>
+
+
+                                <!-- Email -->
+
+                                <div class="col-md-6">
+
+                                    <label class="form-label">
+                                        Email
+                                    </label>
+
+                                    <input type="email"
+                                           name="email_from"
+                                           class="form-control"/>
+
+                                </div>
+
+
+                                <!-- Phone -->
+
+                                <div class="col-md-6">
+
+                                    <label class="form-label">
+                                        Phone
+                                    </label>
+
+                                    <input type="text"
+                                           name="phone"
+                                           class="form-control"/>
+
+                                </div>
+
+
+                                <!-- Expected Revenue -->
+
+                                <div class="col-md-6">
+
+                                    <label class="form-label">
+                                        Expected Revenue
+                                    </label>
+
+                                    <input type="number"
+                                           name="expected_revenue"
+                                           step="0.01"
+                                           class="form-control"/>
+
+                                </div>
+
+
+                                <!-- Probability -->
+
+                                <div class="col-md-6">
+
+                                    <label class="form-label">
+                                        Probability (%)
+                                    </label>
+
+                                    <input type="number"
+                                           name="probability"
+                                           min="0"
+                                           max="100"
+                                           step="0.01"
+                                           class="form-control"/>
+
+                                </div>
+
+
+                                <!-- Expected Closing -->
+
+                                <div class="col-md-6">
+
+                                    <label class="form-label">
+                                        Expected Closing
+                                    </label>
+
+                                    <input type="date"
+                                           name="date_deadline"
+                                           class="form-control"/>
+
+                                </div>
+
+
+                                <!-- Description -->
+
+                                <div class="col-12">
+
+                                    <label class="form-label">
+                                        Description
+                                    </label>
+
+                                    <textarea name="description"
+                                              rows="5"
+                                              class="form-control"></textarea>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="mt-4">
+
+                                <button type="submit"
+                                        class="btn btn-primary">
+
+                                    Create Lead
+
+                                </button>
+
+                                <a href="/my/crm/leads"
+                                   class="btn btn-outline-secondary ms-2">
+
+                                    Cancel
+
+                                </a>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </t>
+
+    </template>
+
+
+    <!-- =====================================================
+         EDIT LEAD
+    ====================================================== -->
+
+    <template id="crm_lead_edit"
+              name="CRM Portal Edit Lead">
+
+        <t t-call="portal.portal_layout">
+
+            <div class="crm-page">
+
+                <div class="container py-4">
+
+                    <div class="crm-detail-card">
+
+                        <a
+                                t-att-href="'/my/crm/leads/%s' % lead.id"
+                                class="crm-back-link">
+
+                            ← Back to Lead
+
+                        </a>
+
+
+                        <h2 class="crm-page-title mt-3">
+                            Edit Lead
+                        </h2>
+
+
+                        <form
+                                t-att-action="'/my/crm/leads/%s/edit' % lead.id"
+                                method="post"
+                                class="mt-4">
+
+                            <input type="hidden"
+                                   name="csrf_token"
+                                   t-att-value="request.csrf_token()"/>
+
+
+                            <div class="row g-3">
+
+                                <!-- Lead Name -->
+
+                                <div class="col-md-6">
+
+                                    <label class="form-label">
+                                        Lead Name
+                                    </label>
+
+                                    <input type="text"
+                                           name="name"
+                                           class="form-control"
+                                           t-att-value="lead.name"/>
+
+                                </div>
+
+
+                                <!-- Email -->
+
+                                <div class="col-md-6">
+
+                                    <label class="form-label">
+                                        Email
+                                    </label>
+
+                                    <input type="email"
+                                           name="email_from"
+                                           class="form-control"
+                                           t-att-value="lead.email_from or ''"/>
+
+                                </div>
+
+
+                                <!-- Phone -->
+
+                                <div class="col-md-6">
+
+                                    <label class="form-label">
+                                        Phone
+                                    </label>
+
+                                    <input type="text"
+                                           name="phone"
+                                           class="form-control"
+                                           t-att-value="lead.phone or ''"/>
+
+                                </div>
+
+
+                                <!-- Expected Revenue -->
+
+                                <div class="col-md-6">
+
+                                    <label class="form-label">
+                                        Expected Revenue
+                                    </label>
+
+                                    <input type="number"
+                                           name="expected_revenue"
+                                           step="0.01"
+                                           class="form-control"
+                                           t-att-value="lead.expected_revenue or 0"/>
+
+                                </div>
+
+
+                                <!-- Probability -->
+
+                                <div class="col-md-6">
+
+                                    <label class="form-label">
+                                        Probability
+                                    </label>
+
+                                    <input type="number"
+                                           name="probability"
+                                           min="0"
+                                           max="100"
+                                           step="0.01"
+                                           class="form-control"
+                                           t-att-value="lead.probability or 0"/>
+
+                                </div>
+
+
+                                <!-- Expected Closing -->
+
+                                <div class="col-md-6">
+
+                                    <label class="form-label">
+                                        Expected Closing
+                                    </label>
+
+                                    <input type="date"
+                                           name="date_deadline"
+                                           class="form-control"
+                                           t-att-value="lead.date_deadline or ''"/>
+
+                                </div>
+
+
+                                <!-- Description -->
+
+                                <div class="col-12">
+
+                                    <label class="form-label">
+                                        Description
+                                    </label>
+
+                                    <textarea name="description"
+                                              rows="5"
+                                              class="form-control">
+                                        <t t-esc="lead.description or ''"/>
+                                    </textarea>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="mt-4">
+
+                                <button type="submit"
+                                        class="btn btn-primary">
+
+                                    Save Changes
+
+                                </button>
+
+                                <a
+                                        t-att-href="'/my/crm/leads/%s' % lead.id"
+                                        class="btn btn-outline-secondary ms-2">
+
+                                    Cancel
+
+                                </a>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </t>
+
+    </template>
+
+</odoo>
